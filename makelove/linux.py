@@ -125,9 +125,6 @@ def get_appimagetool():
 
 
 
-def give_permissions(path):
-
-
 def print_debug_tree(startpath):
     for root, dirs, files in os.walk(startpath):
         level = root.replace(startpath, '').count(os.sep)
