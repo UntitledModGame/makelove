@@ -14,6 +14,9 @@ from .util import fuse_files, tmpfile, parse_love_version, ask_yes_no
 from .config import all_love_versions, should_build_artifact
 
 
+PERMS = 0o755 # execute, read, write permissions for use with os.chmod
+
+
 def get_appimagetool_path():
     return os.path.join(appdirs.user_cache_dir("makelove"), "appimagetool")
 
@@ -92,7 +95,7 @@ def download_appimage(url):
         appimage_path = tmpfile(suffix=".AppImage")
         print("Downloading {}..".format(url))
         urlretrieve(url, appimage_path)
-        os.chmod(appimage_path, 0o755)
+        os.chmod(appimage_path, PERMS)
         return appimage_path
     except Exception as exc:
         sys.exit("Could not download löve appimage from {}: {}".format(url, exc))
@@ -114,17 +117,15 @@ def get_appimagetool():
             os.makedirs(os.path.dirname(appimagetool_path), exist_ok=True)
             print("Downloading '{}'..".format(url))
             urlretrieve(url, appimagetool_path)
-            os.chmod(appimagetool_path, 0o755)
+            os.chmod(appimagetool_path, PERMS)
             return appimagetool_path
         except URLError as exc:
             sys.exit("Could not download appimagetool from {}: {}".format(url, exc))
 
 
 
-PERMISSIONS = 0o755 # execute, read, write
 
 def give_permissions(path):
-    os.chmod(path, PERMISSIONS)
 
 
 def print_debug_tree(startpath):
@@ -148,7 +149,7 @@ def build_linux(config, version, target, target_directory, love_file_path):
         # Download it every time, in case it's updated (I might make them smaller)
         # TODO: this shouldn't be necessary anymore if we're downloading from the official love repo
         source_appimage = download_love_appimage(config["love_version"])
-    give_permissions(source_appimage)
+    os.chmod(source_appimage, PERMS)
 
     print("Extracting source AppImage '{}'..".format(source_appimage))
     ret = subprocess.run(
@@ -191,7 +192,7 @@ def build_linux(config, version, target, target_directory, love_file_path):
             )
         )
         fuse_files(fused_exe_path, appdir("bin/love"), love_file_path)
-        os.chmod(fused_exe_path, 0o755)
+        os.chmod(fused_exe_path, PERMS)
         os.remove(appdir("bin/love"))
         desktop_exec = f"{game_name} %f"
     else:
