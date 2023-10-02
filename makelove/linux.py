@@ -128,6 +128,7 @@ def build_linux(config, version, target, target_directory, love_file_path):
         if not os.path.isabs(source_appimage):
             source_appimage = os.path.join(os.getcwd(), source_appimage)
             print("SOURCE_APPIMAGE afterwards: ", source_appimage)
+        print("Exists: ", os.path.exists(source_appimage))
     else:
         assert "love_version" in config
         # Download it every time, in case it's updated (I might make them smaller)
