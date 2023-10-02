@@ -254,7 +254,7 @@ def build_linux(config, version, target, target_directory, love_file_path):
         elif os.path.isfile(appdir("lib/liblove.so")):
             # Official AppImages (since 11.4)
             so_target_dir = appdir("lib/")
-        elif os.path.isfile(appdir("lib/liblove-12.so")):
+        elif os.path.isfile(appdir("lib/liblove-12.0.so")):
             # OLI MONKEYPATCH:
             # 12.0 AppImage
             so_target_dir = appdir("lib/")
