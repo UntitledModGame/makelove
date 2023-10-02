@@ -127,6 +127,15 @@ def give_permissions(path):
     os.chmod(path, PERMISSIONS)
 
 
+def print_debug_tree(startpath):
+    for root, dirs, files in os.walk(startpath):
+        level = root.replace(startpath, '').count(os.sep)
+        indent = ' ' * 4 * (level)
+        print('{}{}/'.format(indent, os.path.basename(root)))
+        subindent = ' ' * 4 * (level + 1)
+        for f in files:
+            print('{}{}'.format(subindent, f))
+
 
 def build_linux(config, version, target, target_directory, love_file_path):
     if target in config and "source_appimage" in config[target]:
@@ -139,14 +148,15 @@ def build_linux(config, version, target, target_directory, love_file_path):
         # Download it every time, in case it's updated (I might make them smaller)
         # TODO: this shouldn't be necessary anymore if we're downloading from the official love repo
         source_appimage = download_love_appimage(config["love_version"])
-
     give_permissions(source_appimage)
+
     print("Extracting source AppImage '{}'..".format(source_appimage))
     ret = subprocess.run(
         [source_appimage, "--appimage-extract"],
         cwd=target_directory,
         capture_output=True,
     )
+    print_debug_tree(target_directory)
     if ret.returncode != 0:
         sys.exit("Could not extract AppImage: {}".format(ret.stderr.decode("utf-8")))
 
